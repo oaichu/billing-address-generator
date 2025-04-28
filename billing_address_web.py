@@ -1,9 +1,8 @@
-# File: billing_address_web.py
+# File: billing_address_web_display.py
 
 import streamlit as st
 import pandas as pd
 import random
-from io import BytesIO
 
 # Danh sách thành phố, bang và ZIP code mẫu
 us_cities = [
@@ -65,15 +64,9 @@ num_addresses = st.number_input("Số lượng địa chỉ muốn tạo:", min_
 if st.button("Tạo Billing Address"):
     df = generate_addresses(num_addresses)
     
-    output = BytesIO()
-    df.to_csv(output, index=False)
-    output.seek(0)
-    
     st.success(f"✅ Đã tạo {num_addresses} địa chỉ!")
-    st.download_button(
-        label="📥 Tải file CSV",
-        data=output,
-        file_name="Billing_Address_List.csv",
-        mime="text/csv"
-    )
+    
+    st.dataframe(df, use_container_width=True)
+    
+    st.caption("📋 Bạn có thể bấm chọn, copy toàn bộ bảng nếu cần sử dụng nhanh!")
 
