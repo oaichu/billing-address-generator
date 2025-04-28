@@ -1,9 +1,11 @@
+# File: billing_address_web.py
 
 import streamlit as st
 import pandas as pd
 import random
 from io import BytesIO
 
+# Danh sách thành phố, bang và ZIP code mẫu
 us_cities = [
     ("New York", "NY", "10001"),
     ("Los Angeles", "CA", "90001"),
@@ -17,6 +19,7 @@ us_cities = [
     ("San Jose", "CA", "95101")
 ]
 
+# Hàm random tên đường
 def random_street():
     street_number = random.randint(100, 9999)
     street_names = [
@@ -26,14 +29,17 @@ def random_street():
     ]
     return f"{street_number} {random.choice(street_names)}"
 
+# Hàm random số điện thoại US
 def random_phone():
     return f"+1-{random.randint(200, 999)}-{random.randint(200, 999)}-{random.randint(1000, 9999)}"
 
+# Hàm random họ tên
 def random_name():
     first_names = ["John", "Jane", "Alex", "Emily", "Michael", "Sarah", "Chris", "Ashley", "Brian", "Jessica"]
     last_names = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia", "Taylor", "Thomas"]
     return f"{random.choice(first_names)} {random.choice(last_names)}"
 
+# Hàm tạo danh sách địa chỉ
 def generate_addresses(n=50):
     addresses = []
     for _ in range(n):
@@ -51,6 +57,7 @@ def generate_addresses(n=50):
         })
     return pd.DataFrame(addresses)
 
+# Giao diện Streamlit
 st.title("🎯 Billing Address Generator")
 
 num_addresses = st.number_input("Số lượng địa chỉ muốn tạo:", min_value=1, max_value=500, value=50, step=1)
@@ -59,14 +66,14 @@ if st.button("Tạo Billing Address"):
     df = generate_addresses(num_addresses)
     
     output = BytesIO()
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False, sheet_name='BillingAddresses')
+    df.to_csv(output, index=False)
     output.seek(0)
     
     st.success(f"✅ Đã tạo {num_addresses} địa chỉ!")
     st.download_button(
-        label="📥 Tải file Excel",
+        label="📥 Tải file CSV",
         data=output,
-        file_name="Billing_Address_List.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        file_name="Billing_Address_List.csv",
+        mime="text/csv"
     )
+
